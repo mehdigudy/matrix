@@ -4,8 +4,8 @@ const rowCount = Math.floor(window.innerHeight / 30);
 
 
 
-const random = (min, max) => {
-    return Math.floor(Math.random() * (max - min + 1)) + min;
+function random(from, to) {
+    return Math.trunc(Math.random() * (to - from + 1) + from);
 }
 
 const getRandomChar = () => {
@@ -29,11 +29,11 @@ const setUpColumn = (p) => {
     const hasChildren = p.children.length > 0;
 
     for (let j = 0; j < rowCount; j++) {
-        const span = hasChildren ? p.children.item(j) : document.createElement('span');
+        const span = hasChildren ? p.children[j] : document.createElement('span');
         span.innerText = getRandomChar();
-        const animate = span.animate([
-            { 'opacity': '0.7' },
-            { 'opacity': '0.2' },
+        const animation = span.animate([
+            { 'opacity': '1' },
+            { 'opacity': '0.5' },
         ], {
             duration: duration,
             delay: delay + (j / 90),
@@ -43,7 +43,7 @@ const setUpColumn = (p) => {
 
         if (j === rowCount - 1) {
 
-            animate.onfinish = () => {
+            animation.onfinish = () => {
                 setUpColumn(p);
             }
 
@@ -60,10 +60,9 @@ const setUpColumn = (p) => {
 
 
 
-for (let i = 1; i <= columnCount; i++) {
+for (let i = 1; i < columnCount; i++) {
     const p = document.createElement('p');
     setUpColumn(p);
-
     document.body.appendChild(p);
 
 }
