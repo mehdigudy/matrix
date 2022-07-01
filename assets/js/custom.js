@@ -4,65 +4,60 @@ const rowCount = Math.floor(window.innerHeight / 30);
 
 
 
+
 function random(from, to) {
     return Math.trunc(Math.random() * (to - from + 1) + from);
 }
 
-const getRandomChar = () => {
-    const charRange = [
+function getRandomChar() {
+    // some ranges for chars of latin and other alphabets
+    const charRanges = [
         [0x3041, 0x30ff],
         [0x0021, 0x007a],
-        [0x00bc, 0x02af],
+        [0x00bc, 0x02af]
+    ];
 
-    ]
-
-    const i = random(0, charRange.length - 1);
-    return String.fromCharCode(random(charRange[i][0], charRange[i][1]));
-
-
+    const i = random(0, charRanges.length - 1);
+    return String.fromCharCode(random(charRanges[i][0], charRanges[i][1]));
 }
 
-const setUpColumn = (p) => {
 
+function setupColumn(p) {
     const delay = random(100, 300);
     const duration = random(100, 2000);
     const hasChildren = p.children.length > 0;
 
     for (let j = 0; j < rowCount; j++) {
-        const span = hasChildren ? p.children[j] : document.createElement('span');
+        const span = hasChildren ? p.children.item(j) : document.createElement('span');
+
         span.innerText = getRandomChar();
         const animation = span.animate([
-            { 'opacity': '1' },
-            { 'opacity': '0.5' },
+            { opacity: '1' },
+            { opacity: '0.05' }
         ], {
             duration: duration,
-            delay: delay + (j / 90),
-            fill: 'forwards'
+            delay: delay + (j * 75), // add delay for every char
+            fill: 'forwards' // keep element with the last state of anim
         });
 
-
+        // re build column after last char disappear
         if (j === rowCount - 1) {
-
             animation.onfinish = () => {
-                setUpColumn(p);
-            }
-
+                setupColumn(p);
+            };
         }
 
         if (!hasChildren) {
             p.appendChild(span);
-
-
         }
     }
-
 }
 
 
 
-for (let i = 1; i < columnCount; i++) {
-    const p = document.createElement('p');
-    setUpColumn(p);
-    document.body.appendChild(p);
 
+for (let i = 0; i < columnCount; i++) {
+    const p = document.createElement('p');
+    setupColumn(p);
+    document.body.append(p);
 }
